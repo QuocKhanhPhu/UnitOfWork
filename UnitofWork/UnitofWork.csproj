@@ -27,7 +27,6 @@
     <RepositoryType>git</RepositoryType>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageTags>unitofwork;repository;efcore;entity-framework-core;data-access;pattern</PackageTags>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
   
   <!-- Include README in package -->
