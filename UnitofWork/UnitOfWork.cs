@@ -1,11 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace UnitofWork
 {
     public interface IUnitOfWork<TContext> : IDisposable where TContext : DbContext
     {
         IRepository<T> GetRepository<T>() where T : class, new();
-        Task<int> SaveChangesAsync();
+        Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+        Task BeginTransactionAsync();
+        Task CommitAsync();
+        Task RollbackAsync();
         TContext Context { get; }
     }
     public class UnitOfWork<TContext> : IUnitOfWork<TContext> where TContext : DbContext
@@ -13,6 +17,7 @@ namespace UnitofWork
         private bool _disposed = false;
         private readonly TContext _context;
         private readonly Dictionary<string, object> _repositories;
+        private IDbContextTransaction? _transaction;
 
         public TContext Context => _context;
 
@@ -37,9 +42,34 @@ namespace UnitofWork
 
         }
 
-        public async Task<int> SaveChangesAsync()
+        public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            return await _context.SaveChangesAsync();
+            return await _context.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task BeginTransactionAsync()
+        {
+            _transaction = await _context.Database.BeginTransactionAsync();
+        }
+
+        public async Task CommitAsync()
+        {
+            if (_transaction != null)
+            {
+                await _transaction.CommitAsync();
+                await _transaction.DisposeAsync();
+                _transaction = null;
+            }
+        }
+
+        public async Task RollbackAsync()
+        {
+            if (_transaction != null)
+            {
+                await _transaction.RollbackAsync();
+                await _transaction.DisposeAsync();
+                _transaction = null;
+            }
         }
 
 
@@ -50,6 +80,7 @@ namespace UnitofWork
             {
                 if (disposing)
                 {
+                    _transaction?.Dispose();
                     _context?.Dispose();
                 }
                 _disposed = true;

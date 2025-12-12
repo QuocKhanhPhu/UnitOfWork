@@ -17,9 +17,8 @@
     <!-- NuGet Package Properties -->
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>PQK.UnitOfWork</PackageId>
-    <Version>1.0.0</Version>
+    <Version>1.0.3</Version>
     <Authors>pqk</Authors>
-    <Company>INFOdation B.V</Company>
     <Description>UnitOfWork pattern implementation with Repository pattern for Entity Framework Core. Provides a generic repository and unit of work pattern to simplify data access layer.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://example.com/UnitofWork</PackageProjectUrl>
@@ -27,6 +26,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageTags>unitofwork;repository;efcore;entity-framework-core;data-access;pattern</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
   
   <!-- Include README in package -->
