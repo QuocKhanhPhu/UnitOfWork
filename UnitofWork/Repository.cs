@@ -13,6 +13,7 @@ namespace UnitofWork
         T Insert(T entity);
         void Update(T entity);
         void Attach(T entity);
+        void Remove(T entity);
         public void UpdateFields(T entity, params Expression<Func<T, object>>[] updatedProperties);
         public string GetPropertyName<TProperty>(Expression<Func<T, TProperty>> propertyExpression);
 
@@ -359,6 +360,11 @@ namespace UnitofWork
             }
 
             throw new ArgumentException("Expression must be a member expression", nameof(propertyExpression));
+        }
+
+        public void Remove(T entity)
+        {
+            _dbSet.Remove(entity);
         }
     }
 }

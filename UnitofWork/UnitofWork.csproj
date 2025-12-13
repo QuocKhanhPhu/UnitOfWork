@@ -17,16 +17,15 @@
     <!-- NuGet Package Properties -->
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>PQK.UnitOfWork</PackageId>
-    <Version>1.0.3</Version>
+    <Version>1.0.4-preview</Version>
     <Authors>pqk</Authors>
     <Description>UnitOfWork pattern implementation with Repository pattern for Entity Framework Core. Provides a generic repository and unit of work pattern to simplify data access layer.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://example.com/UnitofWork</PackageProjectUrl>
-    <RepositoryUrl>https://example.com/your-repo</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageTags>unitofwork;repository;efcore;entity-framework-core;data-access;pattern</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   
   <!-- Include README in package -->
