@@ -33,5 +33,14 @@ jobs:
       - name: Pack
         run: dotnet pack "UnitofWork/UnitofWork.csproj" -c Release --no-build -p:PackageVersion=${{ steps.version.outputs.value }} -o ./artifacts
 
+      - name: Verify NuGet API key secret
+        shell: bash
+        run: |
+          if [ -z "${{ secrets.NUGET_API_KEY }}" ]; then
+            echo "Missing GitHub Actions secret: NUGET_API_KEY"
+            echo "Go to: Settings -> Secrets and variables -> Actions -> New repository secret"
+            exit 1
+          fi
+
       - name: Push to NuGet
         run: dotnet nuget push "./artifacts/*.nupkg" --api-key "${{ secrets.NUGET_API_KEY }}" --source "https://api.nuget.org/v3/index.json" --skip-duplicate
