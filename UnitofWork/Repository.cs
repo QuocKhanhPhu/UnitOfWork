@@ -16,7 +16,6 @@ namespace UnitofWork
         void Remove(T entity);
         public void UpdateFields(T entity, params Expression<Func<T, object>>[] updatedProperties);
         public string GetPropertyName<TProperty>(Expression<Func<T, TProperty>> propertyExpression);
-
         IQueryable<T> GetAll(Expression<Func<T, bool>>? predicate = null,
                              Func<IQueryable<T>, IIncludableQueryable<IQueryable, object>>? include = null,
                              Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
