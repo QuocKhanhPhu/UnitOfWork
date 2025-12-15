@@ -1,71 +1,102 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Query;
-using System.Linq.Expressions;
 using UnitofWork.Helper;
 
 namespace UnitofWork
 {
-    public interface IRepository<T> where T : class
+    public interface IRepository<T>
+        where T : class
     {
         void ChangeTable(string table);
-        ValueTask<EntityEntry<T>> InsertAsync(T entity, CancellationToken cancellationToken = default(CancellationToken));
+        ValueTask<EntityEntry<T>> InsertAsync(
+            T entity,
+            CancellationToken cancellationToken = default(CancellationToken)
+        );
         T Insert(T entity);
         void Update(T entity);
         void Attach(T entity);
         void Remove(T entity);
         public void UpdateFields(T entity, params Expression<Func<T, object>>[] updatedProperties);
         public string GetPropertyName<TProperty>(Expression<Func<T, TProperty>> propertyExpression);
-        IQueryable<T> GetAll(Expression<Func<T, bool>>? predicate = null,
-                             Func<IQueryable<T>, IIncludableQueryable<IQueryable, object>>? include = null,
-                             Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
-                             bool disableTracking = false, bool IgnoreQueryFilter = false);
+        IQueryable<T> GetAll(
+            Expression<Func<T, bool>>? predicate = null,
+            Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            bool disableTracking = false,
+            bool IgnoreQueryFilter = false
+        );
 
-        Task<List<T>> GetAllAsync(Expression<Func<T, bool>>? predicate = null,
-                                  Func<IQueryable<T>, IIncludableQueryable<IQueryable, object>>? include = null,
-                                  Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
-                                  bool disableTracking = false, bool IgnoreQueryFilter = false);
+        Task<List<T>> GetAllAsync(
+            Expression<Func<T, bool>>? predicate = null,
+            Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            bool disableTracking = false,
+            bool IgnoreQueryFilter = false
+        );
 
+        TResult? GetFirstOrDefaultSelector<TResult>(
+            Expression<Func<T, TResult>>? selector = null,
+            Expression<Func<T, bool>>? predicate = null,
+            Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            bool disableTracking = false,
+            bool IgnoreQueryFilter = false
+        );
 
-        TResult? GetFirstOrDefaultSelector<TResult>(Expression<Func<T, TResult>>? selector = null,
-                                           Expression<Func<T, bool>>? predicate = null,
-                                           Func<IQueryable<T>, IIncludableQueryable<IQueryable, object>>? include = null,
-                                           Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
-                                           bool disableTracking = false, bool IgnoreQueryFilter = false);
+        Task<TResult?> GetFirstOrDefaultSelectorAsync<TResult>(
+            Expression<Func<T, TResult>>? selector = null,
+            Expression<Func<T, bool>>? predicate = null,
+            Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            bool disableTracking = false,
+            bool IgnoreQueryFilter = false
+        );
 
-        Task<TResult?> GetFirstOrDefaultSelectorAsync<TResult>(Expression<Func<T, TResult>>? selector = null,
-                                                       Expression<Func<T, bool>>? predicate = null,
-                                                       Func<IQueryable<T>, IIncludableQueryable<IQueryable, object>>? include = null,
-                                                       Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
-                                                       bool disableTracking = false, bool IgnoreQueryFilter = false);
+        T? GetFirstOrDefault(
+            Expression<Func<T, bool>>? predicate = null,
+            Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            bool disableTracking = false,
+            bool IgnoreQueryFilter = false
+        );
 
-        T? GetFirstOrDefault(Expression<Func<T, bool>>? predicate = null,
-                             Func<IQueryable<T>, IIncludableQueryable<IQueryable, object>>? include = null,
-                             Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
-                             bool disableTracking = false, bool IgnoreQueryFilter = false);
+        Task<T?> GetFirstOrDefaultAsync(
+            Expression<Func<T, bool>>? predicate = null,
+            Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            bool disableTracking = false,
+            bool IgnoreQueryFilter = false
+        );
 
-        Task<T?> GetFirstOrDefaultAsync(Expression<Func<T, bool>>? predicate = null,
-                                        Func<IQueryable<T>, IIncludableQueryable<IQueryable, object>>? include = null,
-                                        Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
-                                        bool disableTracking = false, bool IgnoreQueryFilter = false);
+        Task<PaginatedList<T>> GetToPageListAsync(
+            Expression<Func<T, bool>>? predicate = null,
+            Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            bool disableTracking = false,
+            bool IgnoreQueryFilter = false,
+            int pageSize = 10,
+            int pageIndex = 1
+        );
 
-        Task<PaginatedList<T>> GetToPageListAsync(Expression<Func<T, bool>>? predicate = null,
-                                                  Func<IQueryable<T>, IIncludableQueryable<IQueryable, object>>? include = null,
-                                                  Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
-                                                  bool disableTracking = false, bool IgnoreQueryFilter = false,
-                                                  int pageSize = 10, int pageIndex = 1);
-
-        PaginatedList<T> GetToPageList(Expression<Func<T, bool>>? predicate = null,
-                                       Func<IQueryable<T>, IIncludableQueryable<IQueryable, object>>? include = null,
-                                       Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
-                                       bool disableTracking = false, bool IgnoreQueryFilter = false,
-                                       int pageSize = 10, int pageIndex = 1);
+        PaginatedList<T> GetToPageList(
+            Expression<Func<T, bool>>? predicate = null,
+            Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            bool disableTracking = false,
+            bool IgnoreQueryFilter = false,
+            int pageSize = 10,
+            int pageIndex = 1
+        );
     }
 
-    public class Repository<T> : IRepository<T> where T : class, new()
+    public class Repository<T> : IRepository<T>
+        where T : class, new()
     {
         private readonly DbContext _context;
         private readonly DbSet<T> _dbSet;
+
         public Repository(DbContext context)
         {
             _context = context;
@@ -97,15 +128,21 @@ namespace UnitofWork
             return _dbSet.Add(entity: entity).Entity;
         }
 
-        public async ValueTask<EntityEntry<T>> InsertAsync(T entity, CancellationToken cancellationToken = default(CancellationToken))
+        public async ValueTask<EntityEntry<T>> InsertAsync(
+            T entity,
+            CancellationToken cancellationToken = default(CancellationToken)
+        )
         {
             return await _dbSet.AddAsync(entity: entity, cancellationToken);
         }
 
-        public IQueryable<T> GetAll(Expression<Func<T, bool>>? predicate = null,
-                                    Func<IQueryable<T>, IIncludableQueryable<IQueryable, object>>? include = null,
-                                    Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
-                                    bool disableTracking = false, bool IgnoreQueryFilter = false)
+        public IQueryable<T> GetAll(
+            Expression<Func<T, bool>>? predicate = null,
+            Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            bool disableTracking = false,
+            bool IgnoreQueryFilter = false
+        )
         {
             IQueryable<T> queryable = _dbSet;
 
@@ -129,10 +166,13 @@ namespace UnitofWork
             return queryable;
         }
 
-        public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>>? predicate = null,
-                                               Func<IQueryable<T>, IIncludableQueryable<IQueryable, object>>? include = null,
-                                               Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
-                                               bool disableTracking = false, bool IgnoreQueryFilter = false)
+        public async Task<List<T>> GetAllAsync(
+            Expression<Func<T, bool>>? predicate = null,
+            Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            bool disableTracking = false,
+            bool IgnoreQueryFilter = false
+        )
         {
             IQueryable<T> queryable = _dbSet;
 
@@ -156,11 +196,14 @@ namespace UnitofWork
             return await queryable.ToListAsync();
         }
 
-        public virtual TResult? GetFirstOrDefaultSelector<TResult>(Expression<Func<T, TResult>>? selector = null,
-                                                                  Expression<Func<T, bool>>? predicate = null,
-                                                                  Func<IQueryable<T>, IIncludableQueryable<IQueryable, object>>? include = null,
-                                                                  Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
-                                                                  bool disableTracking = false, bool IgnoreQueryFilter = false)
+        public virtual TResult? GetFirstOrDefaultSelector<TResult>(
+            Expression<Func<T, TResult>>? selector = null,
+            Expression<Func<T, bool>>? predicate = null,
+            Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            bool disableTracking = false,
+            bool IgnoreQueryFilter = false
+        )
         {
             IQueryable<T> queryable = _dbSet;
 
@@ -189,12 +232,14 @@ namespace UnitofWork
             return (TResult?)(object?)queryable.FirstOrDefault();
         }
 
-        public virtual async Task<TResult?> GetFirstOrDefaultSelectorAsync<TResult>(Expression<Func<T, TResult>>? selector = null,
-                                                                   Expression<Func<T, bool>>? predicate = null,
-                                                                   Func<IQueryable<T>, IIncludableQueryable<IQueryable, object>>? include = null,
-                                                                   Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
-                                                                   bool disableTracking = false,
-                                                                   bool IgnoreQueryFilter = false)
+        public virtual async Task<TResult?> GetFirstOrDefaultSelectorAsync<TResult>(
+            Expression<Func<T, TResult>>? selector = null,
+            Expression<Func<T, bool>>? predicate = null,
+            Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            bool disableTracking = false,
+            bool IgnoreQueryFilter = false
+        )
         {
             IQueryable<T> queryable = _dbSet;
 
@@ -223,10 +268,13 @@ namespace UnitofWork
             return (TResult?)(object?)await queryable.FirstOrDefaultAsync();
         }
 
-        public T? GetFirstOrDefault(Expression<Func<T, bool>>? predicate = null,
-                                            Func<IQueryable<T>, IIncludableQueryable<IQueryable, object>>? include = null,
-                                            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
-                                            bool disableTracking = false, bool IgnoreQueryFilter = false)
+        public T? GetFirstOrDefault(
+            Expression<Func<T, bool>>? predicate = null,
+            Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            bool disableTracking = false,
+            bool IgnoreQueryFilter = false
+        )
         {
             IQueryable<T> queryable = _dbSet;
 
@@ -250,10 +298,13 @@ namespace UnitofWork
             return queryable.FirstOrDefault();
         }
 
-        public async Task<T?> GetFirstOrDefaultAsync(Expression<Func<T, bool>>? predicate = null,
-                                                              Func<IQueryable<T>, IIncludableQueryable<IQueryable, object>>? include = null,
-                                                              Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
-                                                              bool disableTracking = false, bool IgnoreQueryFilter = false)
+        public async Task<T?> GetFirstOrDefaultAsync(
+            Expression<Func<T, bool>>? predicate = null,
+            Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            bool disableTracking = false,
+            bool IgnoreQueryFilter = false
+        )
         {
             IQueryable<T> queryable = _dbSet;
 
@@ -277,11 +328,15 @@ namespace UnitofWork
             return await queryable.FirstOrDefaultAsync();
         }
 
-        public Task<PaginatedList<T>> GetToPageListAsync(Expression<Func<T, bool>>? predicate = null,
-                                                         Func<IQueryable<T>, IIncludableQueryable<IQueryable, object>>? include = null,
-                                                         Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
-                                                         bool disableTracking = false, bool IgnoreQueryFilter = false,
-                                                         int pageSize = 10, int pageIndex = 1)
+        public Task<PaginatedList<T>> GetToPageListAsync(
+            Expression<Func<T, bool>>? predicate = null,
+            Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            bool disableTracking = false,
+            bool IgnoreQueryFilter = false,
+            int pageSize = 10,
+            int pageIndex = 1
+        )
         {
             IQueryable<T> queryable = _dbSet;
 
@@ -305,11 +360,15 @@ namespace UnitofWork
             return queryable.ToPageListAsync(pageIndex, pageSize);
         }
 
-        public PaginatedList<T> GetToPageList(Expression<Func<T, bool>>? predicate = null,
-                                              Func<IQueryable<T>, IIncludableQueryable<IQueryable, object>>? include = null,
-                                              Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
-                                              bool disableTracking = false, bool IgnoreQueryFilter = false,
-                                              int pageSize = 10, int pageIndex = 1)
+        public PaginatedList<T> GetToPageList(
+            Expression<Func<T, bool>>? predicate = null,
+            Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            bool disableTracking = false,
+            bool IgnoreQueryFilter = false,
+            int pageSize = 10,
+            int pageIndex = 1
+        )
         {
             IQueryable<T> queryable = _dbSet;
 
@@ -358,7 +417,10 @@ namespace UnitofWork
                 return memberExpression.Member.Name;
             }
 
-            throw new ArgumentException("Expression must be a member expression", nameof(propertyExpression));
+            throw new ArgumentException(
+                "Expression must be a member expression",
+                nameof(propertyExpression)
+            );
         }
 
         public void Remove(T entity)
